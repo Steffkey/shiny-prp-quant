@@ -1,0 +1,12 @@
+name: prp-quant
+title:
+username: stef
+account: stef
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 12131656
+bundleId: 8708203
+url: https://stef.shinyapps.io/prp-quant/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
