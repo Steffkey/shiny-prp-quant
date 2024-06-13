@@ -8,19 +8,16 @@ library(shinydashboardPlus)
 library(shinyRadioMatrix)
 library(shinyWidgets)
 library(tinytex)
-library(rsconnect) 
+#library(rsconnect)
 
-# clear environment
-rm(list = ls()) 
+#### PREPARATIONS '#############################################################
 
-# Load the processed data
-load("prp_PRP16.RData")
-# set path to template excel in local folder
-path = "PRP_QUANT_V2_itemtypes_sheet_16.xlsx"
+rm(list = ls()) # clear environment
+load("prp_PRP16.RData") # Load the processed data
+path = "PRP_QUANT_V2_itemtypes_sheet_16.xlsx" # set path to template excel
+source("functionlibrary.R", local = TRUE) # get functions
 
-######### GET FUNCTIONS
-source("functionlibrary.R", local = TRUE) # read function library script
-
+#### UI ########################################################################
 
 ui <- fluidPage(
   
@@ -63,33 +60,34 @@ ui <- fluidPage(
   
   fluidRow(
     class = "conditional-panel",
-    conditionalPanel(
-      condition = "input.selecttemplate == 'prp'",
-      fluidRow(
-        #  class = "row",
-        column(width = 3, class = "column",
-        materialSwitch("descript", label = "Show descriptions", value = TRUE, status = "primary", right = FALSE),
-        tags$p(actionLink("browse", "Browse examples")),
-
-        tags$br(),
-
-        div(class = "flex-container",
-            radioButtons('format', 'Export as:', c('PDF', 'XML', 'Word'), inline = TRUE),
-            downloadButton("report", label = "", class = "download-btn", onclick = "document.getElementById('state').click()"),
-            downloadButton("state", label = "",  style = "opacity: 0; position: fixed; pointer-events:none;")
-        ),
-
-        br(),
-
-        div(class = "flex-container",
-            fileInput("uploadFile", "Upload Previous State")
+      conditionalPanel(
+        condition = "input.selecttemplate == 'prp'",
+          fluidRow(
+            #  class = "row",
+            column(width = 3, class = "column",
+            materialSwitch("descript", label = "Show descriptions", value = TRUE, status = "primary", right = FALSE),
+            tags$p(actionLink("browse", "Browse examples")),
+    
+            tags$br(),
+    
+            div(class = "flex-container",
+                radioButtons('format', 'Export as:', c('PDF', 'XML', 'Word'), inline = TRUE),
+                downloadButton("report", label = "", class = "download-btn", onclick = "document.getElementById('state').click()"),
+                downloadButton("state", label = "",  style = "opacity: 0; position: fixed; pointer-events:none;")
+            ),
+    
+            br(),
+    
+            div(class = "flex-container",
+                fileInput("uploadFile", "Upload Previous State")
+            )
+          ),
+    
+          column(width = 9, class = "column",
+                 uiOutput("prp_panel")
+          )
         )
-      ),
-
-      column(width = 9, class = "column",
-             uiOutput("prp_panel")
       )
-    ))
   ),
   #### END Action & Button panel
   #### Instruction page / landing page ####
@@ -116,10 +114,11 @@ ui <- fluidPage(
   )
   #### END Instruction page / landing page
 )
-################################################################################
-#################### SERVER ####################################################
+
+#### SERVER ####################################################################
+
 server <- function(input, output, session) {
-  ##### browse link ####  
+  #### browse link ####  
   # The following code causes that the a PsychArchives Search with prespecified criteria is opened in a new browser window
   # when the user clicks on the button "browse"; search criteria and resulting PsychArchives link: 
   # dc.type:preregistration AND zpid.tags.visible:PRP-QUANT AND dc.rights: openAccess
@@ -128,32 +127,8 @@ server <- function(input, output, session) {
     session$sendCustomMessage("openNewWindow", list(url = "https://www.psycharchives.org/en/browse/?fq=dcType_keyword%3A%28%22preregistration%22%29+AND+dcRights_keyword%3A%28%22openAccess%22%29&q=dc.type%3Apreregistration+AND+zpid.tags.visible%3APRP-QUANT+AND+dc.rights%3A+openAccess"))
   })
   ##### END browse link 
-  
-  ##### render tooltip #####
-  output$tooltip_text <- renderPrint({
-    input$num_input
-  })
-  ##### END render tooltip
-  
-  
-  #### content landing page ----
-  output$content <-
-    renderUI({
-      if (req(input$selecttemplate) == 0) {
-        tabItem("p0",
-                p("By using preregistration, researchers can verify that their studies have been conducted, analyzed, and reported as initially specified."),
-                div("Text zu PRP QUANT Lorem ipsum dolorede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, "),
-                br(),
-                div("Text zu fMRI Lorem ipsum dolor sit amet, c, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, "),
-                br(),
-                div("Text zu Scoping Review Lorem ipsum dolor stincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, "),
-                br()
-        )
-      } 
-    })
-  
-  
-  ##################### add/remove contributors ###########################    
+
+  #### add/remove contributors ###########################    
   # Track the number of input boxes to render
   counter <- reactiveVal(1) # Counter for contributors
   
@@ -280,7 +255,7 @@ server <- function(input, output, session) {
   
   ##################### END add/remove contributors  
   
-  ##################### navigate to next tabPanel ###########################
+  #### navigate to next tabPanel ###########################
   # Define a reactive expression to track the current tab
   current_tab <- reactiveVal(1)
   
@@ -298,13 +273,23 @@ server <- function(input, output, session) {
       #  print(current_tab()) # for debugging
     })
   })
+
+  # Set up observer for previous button using lapply
+  lapply(1:length(prp_sheets), function(i) {
+    observeEvent(input[[paste0("previous", i)]], {
+      current_tab(current_tab() - 1) # decrease index if button is clicked
+      #  print(current_tab()) # for debugging
+    })
+  })
   
   # Update the selected tab based on the current_tab value
   observe({
-    updateTabsetPanel(session, "prp", selected = prp_sheets[current_tab()]) # generalisieren für alle templates und sheets
+    updateTabsetPanel(session, "prp", selected = prp_sheets[current_tab()]) # generalize for all templates and sheets
+    session$sendCustomMessage(type = "scrollTop", message = list())
   })
+  
   ##################### END navigate to next tabPanel 
-  ##################### print report and save params ###########################
+  #### print report and save params ###########################
   output$report <- downloadHandler(
     filename = function() {
       paste('report', sep = '', switch(
@@ -361,5 +346,6 @@ server <- function(input, output, session) {
   )
   ##################### END print report and save params 
 }
+#### RUN APP ###################################################################
 
 shinyApp(ui = ui, server = server)
