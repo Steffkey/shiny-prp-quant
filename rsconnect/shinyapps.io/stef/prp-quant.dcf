@@ -1,13 +1,13 @@
 name: prp-quant
-title:
+title: PRP-QUANT
 username: stef
 account: stef
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 12131656
-bundleId: 8708557
+bundleId: 8741583
 url: https://stef.shinyapps.io/prp-quant/
 version: 1
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: README.md
+ignoredFiles: prp_PRP16.RData|README.md

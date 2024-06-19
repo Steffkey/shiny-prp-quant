@@ -8,12 +8,12 @@ library(shinydashboardPlus)
 library(shinyRadioMatrix)
 library(shinyWidgets)
 library(tinytex)
-#library(rsconnect)
+library(rsconnect)
 
 #### PREPARATIONS '#############################################################
 
 rm(list = ls()) # clear environment
-load("prp_PRP16.RData") # Load the processed data
+load("prp_17.RData") # Load the processed data
 path = "PRP_QUANT_V2_itemtypes_sheet_16.xlsx" # set path to template excel
 source("functionlibrary.R", local = TRUE) # get functions
 
@@ -65,22 +65,36 @@ ui <- fluidPage(
           fluidRow(
             #  class = "row",
             column(width = 3, class = "column",
-            materialSwitch("descript", label = "Show descriptions", value = TRUE, status = "primary", right = FALSE),
-            tags$p(actionLink("browse", "Browse examples")),
+                   materialSwitch(inputId = "descript", label = "Show descriptions", value = TRUE, status = "primary", right = FALSE),
+                   tags$p(actionLink(inputId = "browse", label = "Browse examples")),
     
-            tags$br(),
-    
-            div(class = "flex-container",
-                radioButtons('format', 'Export as:', c('PDF', 'XML', 'Word'), inline = TRUE),
-                downloadButton("report", label = "", class = "download-btn", onclick = "document.getElementById('state').click()"),
-                downloadButton("state", label = "",  style = "opacity: 0; position: fixed; pointer-events:none;")
-            ),
-    
-            br(),
-    
-            div(class = "flex-container",
-                fileInput("uploadFile", "Upload Previous State")
-            )
+                  br(), br(),
+          
+                  div(
+                    class = "icon-paragraph",
+                    tags$i(id = "export_icon", class = "fa-solid fa-circle-question question_icon", style = "cursor: pointer;", 
+                           `data-tooltip` = "Select PDF for your final report, XML for a machine-readable metadata description, and Word if you want to edit your file offline."),
+                    strong("Export your inputs:")
+                  ), 
+                  
+                  div(class = "export-import-container", 
+                      radioButtons(inputId = 'format', label = '', choices = c('PDF', 'XML', 'Word'), selected = "PDF", inline = TRUE),
+                      downloadButton("report", label = "", class = "download-btn", onclick = "document.getElementById('state').click()"),
+                      downloadButton("state", label = "",  style = "opacity: 0; position: fixed; pointer-events:none;")
+                  ),
+                  
+                  br(), br(),
+                  
+                  div(
+                    class = "icon-paragraph",
+                    tags$i(id = "upload_icon", class = "fa-solid fa-circle-question question_icon", style = "cursor: pointer;", 
+                           `data-tooltip` = "Each time you export your inputs, an .rds file will also be exported. Upload this .rds file here to continue working on your protocol."),
+                    strong("Import Previous State (.rds file):")
+                  ), 
+                  
+                  div(class = "export-import-container",
+                      fileInput("uploadFile", "")
+                  )
           ),
     
           column(width = 9, class = "column",
@@ -104,10 +118,12 @@ ui <- fluidPage(
         p("Step 2: Export your study protocol as PDF."),
         p("Step 3: Submit your PDF to PsychArchives (https://pasa.psycharchives.org/)."),
         br(),
-        p(strong("IMPORTANT:"), "Save your progress once in a while by clicking the ", strong("download button"), "that you will see on the left."),
-        p("In addition to the file format you selected, a ", strong(".rds file"), " will be downloaded. This is the most important file because it can be uploaded again later."),
+        p(strong("IMPORTANT:")), 
+        p("Save your progress once in a while by clicking the ", strong("download button"), "that you will see on the left."),
+        p("In addition to the file format you selected, a ", strong(".rds file"), " will be downloaded. This is the most important file"),
+        p("because it saves your progress and can be uploaded again later."),
         br(),
-        p("To begin, select “Template” in the drop-down menu on the upper left."),
+        p("To begin, switch from", em("Instructions"), " to ", em("Template"), "in the drop-down menu on the upper left."),
         br()
       )
     ),
@@ -158,7 +174,7 @@ server <- function(input, output, session) {
   
   # Render the initial mainPanel
   output$prp_panel <- renderUI({
-    generate_prp_panel(prp_sheets, prp_items)
+    generate_prp_panel(temp_sheets, temp_items)
   })
   
   # Function to handle uploaded file
@@ -204,7 +220,7 @@ server <- function(input, output, session) {
       
       # Update the mainPanel with new data
       output$prp_panel <- renderUI({
-        generate_prp_panel(prp_sheets, modified_items)
+        generate_prp_panel(temp_sheets, modified_items)
       })
       
     }
@@ -262,12 +278,12 @@ server <- function(input, output, session) {
   # Observe the selected tab in the navlistPanel and update current_tab accordingly
   observeEvent(input$prp, { # observe which tab is active
     #  print(input$prp) # for debugging
-    current_tab(match(input$prp, prp_sheets)) # find out the index of the current tab
+    current_tab(match(input$prp, temp_sheets)) # find out the index of the current tab
     #  print(current_tab()) # for debugging
   })
   
   # Set up observer for next button using lapply
-  lapply(1:length(prp_sheets), function(i) {
+  lapply(1:length(temp_sheets), function(i) {
     observeEvent(input[[paste0("next", i)]], {
       current_tab(current_tab() + 1) # increase index if button is clicked
       #  print(current_tab()) # for debugging
@@ -275,7 +291,7 @@ server <- function(input, output, session) {
   })
 
   # Set up observer for previous button using lapply
-  lapply(1:length(prp_sheets), function(i) {
+  lapply(1:length(temp_sheets), function(i) {
     observeEvent(input[[paste0("previous", i)]], {
       current_tab(current_tab() - 1) # decrease index if button is clicked
       #  print(current_tab()) # for debugging
@@ -284,7 +300,7 @@ server <- function(input, output, session) {
   
   # Update the selected tab based on the current_tab value
   observe({
-    updateTabsetPanel(session, "prp", selected = prp_sheets[current_tab()]) # generalize for all templates and sheets
+    updateTabsetPanel(session, "prp", selected = temp_sheets[current_tab()]) # generalize for all templates and sheets
     session$sendCustomMessage(type = "scrollTop", message = list())
   })
   

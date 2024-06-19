@@ -12,7 +12,7 @@ Sys.setlocale("LC_TIME", "English") # we want the date to be displayed in Englis
 ```` 
 
 ---
-date: '`r format(Sys.Date(), "%B %d, %Y")`^*'
+date: '`r format(Sys.time(), "%B %d, %Y at %H:%M")`^*'
 ---
 \footnotetext{* This is not an official timestamp. The timestamp will be assigned upon submission to PsychArchives.}
 
@@ -42,7 +42,7 @@ cat("This preregistration is based on the PRP-QUANT Template (version 3).", "\n\
 
 ````{r, echo = FALSE, results = 'asis'}
 
-for (i in (last_i):length(params$answers)) # titelseite wird separat formatiert, danach loop durch alle items
+for (i in last_i:length(params$answers)) # titelseite wird separat formatiert, danach loop durch alle items
 {
   if(grepl("hxxd_", params$questions[[i]])) # find the headings (marked wit "hxxd_")
   {
@@ -51,6 +51,8 @@ for (i in (last_i):length(params$answers)) # titelseite wird separat formatiert,
   
   else if (is.list(params$answers[[i]]))  # matrix item - ACHTUNG! Passt nur auf dieses eine Matrix Item 
   {
+    cat("##", params$questions[[i]], "\n\n")
+    
     for (a in names(params$answers[[i]])) 
       {
         if (is.null(params$answers[[i]][[a]]))
@@ -95,7 +97,7 @@ for (i in (last_i):length(params$answers)) # titelseite wird separat formatiert,
   }
 }
 cat("This document was created using the Psychological Research Preregistration-Quantitative (aka PRP-QUANT) Template, version 3 (available at https://www.psycharchives.org/).", "\n\n", sep ="")
-cat("The PRP-QUANT Template was originally developed by a task force composed of members of the American Psychological Association (APA), the British Psychological Society (BPS), the German Psychological Society (DGPs), the Center for Open Science (COS), and the Leibniz Institute for Psychology (ZPID). This work is licensed under the CC BY 4.0 license. Thus, you are free to share and adapt the content, given that you attribute the source and indicate if changes were made.At the annual meeting of the Society for Psychological Science (SIPS), version 3 was developed by a group of members in a hackathon in Padova, Italy in 2023.", "\n\n", sep ="")
+cat("The PRP-QUANT Template was originally developed by a task force composed of members of the American Psychological Association (APA), the British Psychological Society (BPS), the German Psychological Society (DGPs), the Center for Open Science (COS), and the Leibniz Institute for Psychology (ZPID). This work is licensed under the CC BY 4.0 license. Thus, you are free to share and adapt the content, given that you attribute the source and indicate if changes were made. At the annual meeting of the Society for Psychological Science (SIPS), version 3 was developed by a group of members in a hackathon in Padova, Italy in 2023.", "\n\n", sep ="")
 cat("The implementation as Shiny app was done by ZPID. Find out more about ZPID and our preregistration service PreReg by visiting https://leibniz-psychology.org/ and http://prereg-psych.org/, respectively. To receive a timestamp and a citable DOI, submit your preregistration protocol as a PDF to PsychArchives via https://pasa.psycharchives.org/.", "\n\n", sep ="")
 ````
 
