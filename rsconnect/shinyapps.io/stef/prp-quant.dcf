@@ -5,9 +5,9 @@ account: stef
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 12131656
-bundleId: 8741583
+bundleId: 8781771
 url: https://stef.shinyapps.io/prp-quant/
 version: 1
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: prp_PRP16.RData|README.md
+ignoredFiles: files/protocol-state-on-06-19-2024-15_09_09.rds|files/temp_prp1.RData|README.md
