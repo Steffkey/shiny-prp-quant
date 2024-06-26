@@ -8,7 +8,8 @@ library(shinydashboardPlus)
 library(shinyRadioMatrix)
 library(shinyWidgets)
 library(tinytex)
-library(rsconnect)
+library(xml2)
+#library(rsconnect)
 
 #### PREPARATIONS '#############################################################
 
