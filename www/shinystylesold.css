@@ -1,24 +1,16 @@
 /* */
 /* styling of the HEADER section */
 
-.logobar { /* white bar that contains the ZPID logo and contact mail */
+.logobar { /* white bar that contains the ZPID logo */
 	padding: 0em;
 	margin: 0;
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
+	text-align: left;
 }
 
 .logo{ /* svg file with logo, more attributes (e.g. size) are set in UI of App.R */
 	padding-top: 5em;
 	padding-bottom: 0.5em;
 	max-width: 100%;
-}
-
-.contact{ /* contact email in the upper right corner */
-font-weight: bold;
-color: green;
-margin: auto 1.5em auto 0;
 }
 
 .sidecolumn { /* darkblue column on the left */
@@ -30,7 +22,7 @@ margin: auto 1.5em auto 0;
 	display: flex;
 	justify-content: left; 
 	align-items: center;
-	background-color: #0097c6;
+	background-color: rgb(131, 23, 118);
 	color: white;
 	margin: 0;
 	height: 4em;

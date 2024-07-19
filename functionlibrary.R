@@ -86,8 +86,10 @@ check_item_type <- function(tabpanel, i, bool_ex) {
          }, #close none
          matrix2 = {
            m_options <- as.list(unlist(strsplit(as.character(tabpanel$options[i]), " tab ")))
-           item <- radioMatrixInput(inputId = tabpanel$id[i], rowIDs = c("analysis code", "experimental code",  "raw data", "processed data"),
-                                    rowLLabels = as.matrix(data.frame(l = c(":", ":", ":", ":"))),
+           #item <- radioMatrixInput(inputId = tabpanel$id[i], rowIDs = c("analysis code", "experimental code",  "raw data", "processed data"),
+           item <- radioMatrixInput(inputId = tabpanel$id[i], rowIDs = c("1", "2",  "3", "4"),
+                                    rowLLabels = as.matrix(data.frame(object = c("analysis code", "experimental code", "raw data", "processed data"))),
+                                    #rowLLabels = as.matrix(data.frame(l = c(":", ":", ":", ":"))),
                                     choices = m_options)
          }, #close matrix2
          stop("Unknown type found in row ", i) # If type is undefined, stop and print an error message
@@ -482,7 +484,7 @@ create_statename <- function(){ # first contributor can be found in params[[1]][
   only_date <- format(current_time, "%m-%d-%Y") # add formatting
   
   # create spreadsheetname and code
-  statename <- paste0("protocol-state-on-", date_time) # e.g. "intermediate-state-on-05-16-2024-10:12:40"
+  statename <- date_time #paste0("state-on-", date_time) # e.g. "intermediate-state-on-05-16-2024-10:12:40"
   
   return(statename)
 }

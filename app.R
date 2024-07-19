@@ -9,14 +9,15 @@ library(shinyRadioMatrix)
 library(shinyWidgets)
 library(tinytex)
 library(xml2)
-#library(rsconnect)
+library(rsconnect)
 
 #### PREPARATIONS '#############################################################
 
 rm(list = ls()) # clear environment
-load("temp_prp2.RData") # Load the processed data
-path = "PRP_QUANT_V2_itemtypes_sheet_17.xlsx" # set path to template excel
+load("temp_prp8.RData") # Load the processed data
+path = "PRP_QUANT_V3_20.xlsx" # set path to template excel
 source("functionlibrary.R", local = TRUE) # get functions
+#source("C:/Users/mueller_admin.ZPIDNB21/Documents/Desktop/Rprojects/scripts/functionlibrary.R", local = TRUE) # get functions
 
 # path = "C:/Users/mueller_admin.ZPIDNB21/Documents/Desktop/Rprojects/PRP-QUANT/PRP_QUANT_V2_itemtypes_sheet_17.xlsx" # set path to template excel
 # source("C:/Users/mueller_admin.ZPIDNB21/Documents/Desktop/Rprojects/scripts/functionlibrary.R", local = TRUE) # get functions
@@ -37,7 +38,8 @@ ui <- fluidPage(
   fluidRow(
     column(width = 3),
     column(width = 9, class = "logobar",
-           div(img(src = "ZPID_Logo_Redesign_2023_RZ_english.svg", style = "height: 5em; width: auto; padding:1em; padding-left:0;", class = "logo"))
+           div(img(src = "ZPID_Logo_Redesign_2023_RZ_english.svg", style = "height: 5em; width: auto; padding:1em; padding-left:0;", class = "logo")),
+           div(tags$a(href = "mailto:stm@leibniz-psychology.org", "contact", style = "color:rgb(26,17,70)"), class = "contact")
     )
   ),
   
@@ -72,32 +74,43 @@ ui <- fluidPage(
                    materialSwitch(inputId = "descript", label = "Show descriptions", value = TRUE, status = "primary", right = FALSE),
                    tags$p(actionLink(inputId = "browse", label = "Browse examples")),
     
-                  br(), br(),
-          
+                  br(), br(), br(), br(),
+                  
+                  # state file + question icon
                   div(
                     class = "icon-paragraph",
                     tags$i(id = "export_icon", class = "fa-solid fa-circle-question question_icon", style = "cursor: pointer;", 
-                           `data-tooltip` = "Select PDF for your final report, XML for a machine-readable metadata description, and Word if you want to edit your file offline."),
-                    strong("Export your inputs:")
-                  ), 
-                  
-                  div(class = "export-import-container", 
-                      radioButtons(inputId = 'format', label = '', choices = c('PDF', 'XML', 'Word'), selected = "PDF", inline = TRUE),
-                      downloadButton("report", label = "", class = "download-btn", onclick = "document.getElementById('state').click()"),
-                      downloadButton("state", label = "",  style = "opacity: 0; position: fixed; pointer-events:none;")
+                           `data-tooltip` = "Make sure to always download the current state before periods of inactivity."),
+                    strong("Save your current state:")
                   ),
+                  div(class = "export-import-container", 
+                  downloadButton("state", label = "Download .rds", style = "margin-top: 1em;")
+                  ),
+                  br(), br(), br(),
                   
-                  br(), br(),
-                  
+                  # import field + question icon
                   div(
                     class = "icon-paragraph",
                     tags$i(id = "upload_icon", class = "fa-solid fa-circle-question question_icon", style = "cursor: pointer;", 
-                           `data-tooltip` = "Each time you export your inputs, an .rds file will also be exported. Upload this .rds file here to continue working on your protocol."),
+                           `data-tooltip` = "Upload your previous state file (.rds) here to continue working on your protocol."),
                     strong("Import previous state (.rds file):")
                   ), 
-                  
                   div(class = "export-import-container",
                       fileInput("uploadFile", "")
+                  ),
+                  
+                  # export report + question icon
+                  div(
+                    class = "icon-paragraph",
+                    tags$i(id = "export_icon", class = "fa-solid fa-circle-question question_icon", style = "cursor: pointer;", 
+                           `data-tooltip` = "Select PDF for your final report, XML for a machine-readable metadata description, and Word if you want to edit your file offline. An .rds file will be downloaded automatially."),
+                    strong("Export your answers:")
+                  ), 
+                  div(class = "export-import-container", 
+                      radioButtons(inputId = 'format', label = '', choices = c('PDF', 'XML', 'Word'), selected = "PDF", inline = TRUE),
+                      downloadButton("report", label = "", class = "download-btn", onclick = "document.getElementById('state').click()"),
+                      #downloadButton("state", label = "",  style = "opacity: 0; position: fixed; pointer-events:none;")
+                      
                   )
           ),
     
@@ -310,8 +323,8 @@ server <- function(input, output, session) {
   #### print report and save params ###########################
   output$report <- downloadHandler(
     filename = function() {
-      paste('report', sep = '', switch(
-        input$format, PDF = '.pdf', XML = 'metadata.xml', Word = '.docx'
+      paste0("report-on-", create_statename(), switch(
+        input$format, PDF = '.pdf', XML = '.xml', Word = '.docx'
       ))
     },
     content = function(file) {
@@ -362,7 +375,7 @@ server <- function(input, output, session) {
   # Second downloadHandler
   output$state <- downloadHandler(
     filename = function() {
-      paste0(create_statename(), ".rds")
+      paste0("state-on-", create_statename(), ".rds")
     },
     content = function(file) {
       params <- generate_params(input, counter())

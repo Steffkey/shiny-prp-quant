@@ -28,17 +28,16 @@ for (i in 1:length(params$authors)){
 cat("## About: ","\n\n")
 last_i <- 3  # use to start next loop 
 for (i in 3:length(params$answers)) { # 1 = Titlepage, 2 = Title, 3 = item to be printed
-  if(grepl("hxxd_", params$questions[[i]])){
+  if(grepl("hxxd_", params$questions[[i]])){ # if a new section heading is encountered
     last_i <- i  # save last iteration value
     break}
   cat("\n\n", sep ="")
-  cat(" __", params$questions[[i]],":", "__ ", params$answers[[i]], sep ="")
+  cat(" __", params$questions[[i]],":", "__ ", params$answers[[i]], "\n\n", sep ="")
 }
-cat("This preregistration is based on the PRP-QUANT Template (version 3).", "\n\n", sep ="")
+cat(" __Used template:__ ", "This preregistration is based on the PRP-QUANT Template (version 3).", "\n\n", sep ="")
 
 ````
 
-\newpage
 
 ````{r, echo = FALSE, results = 'asis'}
 
@@ -96,8 +95,5 @@ for (i in last_i:length(params$answers)) # titelseite wird separat formatiert, d
     cat(params$answers[[i]],  "\n\n")
   }
 }
-cat("This document was created using the Psychological Research Preregistration-Quantitative (aka PRP-QUANT) Template, version 3 (available at https://www.psycharchives.org/).", "\n\n", sep ="")
-cat("The PRP-QUANT Template was originally developed by a task force composed of members of the American Psychological Association (APA), the British Psychological Society (BPS), the German Psychological Society (DGPs), the Center for Open Science (COS), and the Leibniz Institute for Psychology (ZPID). This work is licensed under the CC BY 4.0 license. Thus, you are free to share and adapt the content, given that you attribute the source and indicate if changes were made. At the annual meeting of the Society for Psychological Science (SIPS), version 3 was developed by a group of members in a hackathon in Padova, Italy in 2023.", "\n\n", sep ="")
-cat("The implementation as Shiny app was done by ZPID. Find out more about ZPID and our preregistration service PreReg by visiting https://leibniz-psychology.org/ and http://prereg-psych.org/, respectively. To receive a timestamp and a citable DOI, submit your preregistration protocol as a PDF to PsychArchives via https://pasa.psycharchives.org/.", "\n\n", sep ="")
 ````
 
