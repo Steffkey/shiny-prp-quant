@@ -1,8 +1,6 @@
 # FUNCTIONS 
 
-# add the following code line to the scripts that use one of these functions: 
-# source("C:/Users/mueller_admin.ZPIDNB21/Documents/Desktop/Rprojects/scripts/functionlibrary.R", local = TRUE)
-
+# add this script via source("yourpath/functionlibrary.R", local=TRUE) to app.R   
 
 #### check item type
 check_item_type <- function(tabpanel, i, bool_ex) {
@@ -417,7 +415,7 @@ generate_params <- function(input, counter) {
   ques <- temp_ques_ans$ques[print_items]
   metadata <- temp_ques_ans$meta[print_items]
   
-  ## 3a. long version includes all items
+  ## 3b. long version includes all items
   ID_l <- temp_ques_ans$ID
   ques_l <- temp_ques_ans$ques
   metadata_l <- temp_ques_ans$meta

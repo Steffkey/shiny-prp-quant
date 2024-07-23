@@ -14,14 +14,10 @@ library(rsconnect)
 #### PREPARATIONS '#############################################################
 
 rm(list = ls()) # clear environment
-load("temp_prp8.RData") # Load the processed data
-path = "PRP_QUANT_V3_20.xlsx" # set path to template excel
+load("temp_prp11.RData") # Load the processed data
+path = "PRP_QUANT_V3_21.xlsx" # set path to template excel
 source("functionlibrary.R", local = TRUE) # get functions
-#source("C:/Users/mueller_admin.ZPIDNB21/Documents/Desktop/Rprojects/scripts/functionlibrary.R", local = TRUE) # get functions
 
-# path = "C:/Users/mueller_admin.ZPIDNB21/Documents/Desktop/Rprojects/PRP-QUANT/PRP_QUANT_V2_itemtypes_sheet_17.xlsx" # set path to template excel
-# source("C:/Users/mueller_admin.ZPIDNB21/Documents/Desktop/Rprojects/scripts/functionlibrary.R", local = TRUE) # get functions
-# load("C:/Users/mueller_admin.ZPIDNB21/Documents/Desktop/Rprojects/PRP-QUANT/files/temp_prp2.RData")
 #### UI ########################################################################
 
 ui <- fluidPage(
