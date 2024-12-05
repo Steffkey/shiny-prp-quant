@@ -5,6 +5,7 @@ library(readxl)
 library(rmarkdown)
 library(shinydashboard)
 library(shinydashboardPlus)
+library(shinyjs)
 library(shinyRadioMatrix)
 library(shinyWidgets)
 library(tinytex)
@@ -35,7 +36,11 @@ ui <- fluidPage(
     column(width = 3),
     column(width = 9, class = "logobar",
            div(img(src = "ZPID_Logo_Redesign_2023_RZ_english.svg", style = "height: 5em; width: auto; padding:1em; padding-left:0;", class = "logo")),
-           div(tags$a(href = "mailto:stm@leibniz-psychology.org", "contact", style = "color:rgb(26,17,70)"), class = "contact")
+           div(class= "contact",
+               div(tags$a(href = "https://apps.leibniz-psychology.org/privacy.html", target = "_blank", "Data Privacy Note", style = "color:#1a1146")),
+               div(tags$a(href = "https://apps.leibniz-psychology.org/terms.html", target = "_blank", "Terms of Use", style = "color:#1a1146")),            
+               div(tags$a(href = "https://apps.leibniz-psychology.org/imprint.html", target = "_blank", "Imprint", style = "color:#1a1146"))    
+      )
     )
   ),
   
@@ -46,18 +51,36 @@ ui <- fluidPage(
              div(class = "headerbar", p(HTML("<strong>Pre</strong>Reg: PRP-QUANT Template")))
            ),
            fluidRow(
-             div(class = "whitebar")
+             div(class = "whitebar",
+                 p(tags$a(href = "mailto:stm@leibniz-psychology.org", "Contact", style = "color:#1a1146"))                 
+                 )
            ))
   ),
   
   #### END header
+  
+  #NEW
+  
+  #### Inform about data privacy note and terms of use
+    fluidRow(
+      column( width = 3, 
+              br(),
+              useShinyjs(),  # Set up shinyjs
+              checkboxInput("agree", label = div("I hereby agree to the site's", 
+                                                    tags$a(href = "https://apps.leibniz-psychology.org/privacy.html", target = "_blank", "Data Privacy Note"), 
+                                                    "and its", 
+                                                    tags$a(href = "https://apps.leibniz-psychology.org/terms.html", target = "_blank", "Terms of Use.")) , value = FALSE)
+            )),
+  #### END Inform about data privacy note and terms of use ####
+  
   #### select Instruction/Template ####
   fluidRow(
-    column(width = 3, class = "column",
+    column(width = 3, 
            selectInput("selecttemplate", "",
-                       choices = list('Instructions'= 0, 'Template'='prp'), selected = '0')
-    )),
+                       choices = list('Instructions'= 0, 'Template'='prp'), selected = '0'))    
+    ),
   #### END select Instruction/Template 
+
   #### Action & Button panel ####
   
   fluidRow(
@@ -137,6 +160,7 @@ ui <- fluidPage(
         p("because it saves your progress and can be uploaded again later."),
         br(),
         p("To begin, switch from", em("Instructions"), " to ", em("Template"), "in the drop-down menu on the upper left."),
+        p("(You must first agree to our Terms of Use and Data Privacy Note.)"),
         br()
       )
     ),
@@ -147,6 +171,20 @@ ui <- fluidPage(
 #### SERVER ####################################################################
 
 server <- function(input, output, session) {
+
+  #### agree to ToU before proceeding to template ####   
+  observeEvent(input$agree, {
+    toggleState("selecttemplate") #enable selectInput field when agreed
+  })
+  observeEvent(input$agree, {
+    toggleState("agree") #disable checkbox field when agreed
+  })
+  toggleState(id = "selecttemplate")
+  enable("selecttemplate")
+  toggleState(id = "agree")
+  disable("agree")
+  #### END agree to ToU before proceeding to template
+  
   #### browse link ####  
   # The following code causes that the a PsychArchives Search with prespecified criteria is opened in a new browser window
   # when the user clicks on the button "browse"; search criteria and resulting PsychArchives link: 

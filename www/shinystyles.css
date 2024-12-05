@@ -16,8 +16,6 @@
 }
 
 .contact{ /* contact email in the upper right corner */
-font-weight: bold;
-color: green;
 margin: auto 1.5em auto 0;
 }
 
@@ -47,6 +45,12 @@ margin: auto 1.5em auto 0;
 	width: auto;
 }
 
+.whitebar > p { /* contact */
+	text-align: right;
+	margin: auto 6em auto 0;
+	font-weight: bold;
+}
+
 /* */
 /* styling of the CONDITIONAL PANEL that holds the template items (mainly used for debugging) */
 .conditional-panel {
@@ -54,7 +58,7 @@ margin: auto 1.5em auto 0;
 	/*margin-bottom: 10px; /* use for debugging style issues */
 }
 
-.conditional-panel .column {
+.column {
 	box-sizing: border-box; /* set so that margins and paddings do not increase box size */
 	padding: 2em;
 	padding-left: 3em; 
